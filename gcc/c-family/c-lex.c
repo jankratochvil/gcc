@@ -515,7 +515,10 @@ c_lex_with_flags (tree *value, location_t *loc, unsigned char *cpp_flags,
 	  break;
 	}
 
-      /* FALLTHROUGH */
+      // Create ATSIGN_EXPR for GDB.
+      *value = NULL_TREE;
+      break;
+
     case CPP_HASH:
     case CPP_PASTE:
       {

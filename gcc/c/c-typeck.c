@@ -10976,6 +10976,19 @@ build_binary_op (location_t location, enum tree_code code,
 	maybe_warn_bool_compare (location, code, orig_op0, orig_op1);
       break;
 
+    case ATSIGN_EXPR:
+      if (TREE_CODE (orig_op1) == INTEGER_CST)
+	{
+	  result_type = build_array_type_nelts (type0, tree_to_uhwi (orig_op1));
+	  converted = 1;
+	  break;
+	}
+      // Otherwise it would look unclear:
+      // error: invalid operands to binary @ (have ‘int’ and ‘int’)
+      error_at (location,
+		"second parameter of operator %<@%> requires constant integer");
+      return error_mark_node;
+
     default:
       gcc_unreachable ();
     }

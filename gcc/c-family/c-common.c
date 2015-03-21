@@ -1289,6 +1289,28 @@ c_fully_fold_internal (tree expr, bool in_init, bool *maybe_const_operands,
       ret = fold (ret);
       goto out;
 
+    case ATSIGN_EXPR:
+      orig_op0 = op0 = TREE_OPERAND (expr, 0);
+      orig_op1 = op1 = TREE_OPERAND (expr, 1);
+      op0 = c_fully_fold_internal (op0, in_init, maybe_const_operands,
+				   maybe_const_itself);
+      STRIP_TYPE_NOPS (op0);
+      op1 = c_fully_fold_internal (op1, in_init, maybe_const_operands,
+				   maybe_const_itself);
+      STRIP_TYPE_NOPS (op1);
+      op1 = decl_constant_value_for_optimization (op1);
+      ret = copy_node (op0);
+      TREE_TYPE (ret) = build_array_type_nelts (TREE_TYPE (op0),
+						tree_to_uhwi (op1));
+      if (ret != expr)
+	{
+	  TREE_READONLY (ret) = TREE_READONLY (expr);
+	  TREE_SIDE_EFFECTS (ret) = TREE_SIDE_EFFECTS (expr);
+	  TREE_THIS_VOLATILE (ret) = TREE_THIS_VOLATILE (expr);
+	}
+      ret = fold (ret);
+      goto out;
+
     case COMPOUND_EXPR:
     case MODIFY_EXPR:
     case PREDECREMENT_EXPR:
@@ -4084,6 +4106,8 @@ binary_op_error (location_t location, enum tree_code code,
       opname = "||"; break;
     case BIT_XOR_EXPR:
       opname = "^"; break;
+    case ATSIGN_EXPR:
+      opname = "@"; break;
     default:
       gcc_unreachable ();
     }

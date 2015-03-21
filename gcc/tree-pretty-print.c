@@ -2037,6 +2037,7 @@ dump_generic_node (pretty_printer *pp, tree node, int spc, int flags,
     case LTGT_EXPR:
     case ORDERED_EXPR:
     case UNORDERED_EXPR:
+    case ATSIGN_EXPR:
       {
 	const char *op = op_symbol (node);
 	op0 = TREE_OPERAND (node, 0);
@@ -3431,6 +3432,9 @@ op_symbol_code (enum tree_code code)
 
     case MIN_EXPR:
       return "min";
+
+    case ATSIGN_EXPR:
+      return "@";
 
     default:
       return "<<< ??? >>>";

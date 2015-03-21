@@ -1173,6 +1173,7 @@ enum c_parser_prec {
   PREC_EQ,
   PREC_REL,
   PREC_SHIFT,
+  PREC_ATSIGN,
   PREC_ADD,
   PREC_MULT,
   NUM_PRECS
@@ -6282,6 +6283,16 @@ c_parser_binary_expression (c_parser *parser, struct c_expr *after,
 	case CPP_MINUS:
 	  oprec = PREC_ADD;
 	  ocode = MINUS_EXPR;
+	  break;
+	case CPP_ATSIGN:
+	  if (!c_binding_oracle)
+	    {
+	      error_at (c_parser_peek_token (parser)->location,
+			"stray %qs in program", "@");
+	      goto out;
+	    }
+	  oprec = PREC_ATSIGN;
+	  ocode = ATSIGN_EXPR;
 	  break;
 	case CPP_LSHIFT:
 	  oprec = PREC_SHIFT;
